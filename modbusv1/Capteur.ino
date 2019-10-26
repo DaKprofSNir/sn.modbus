@@ -3,7 +3,7 @@
    Fichier : modbus_TEMPERATURE.ino
    Version du fichier : 1.0
    Auteur  : <inscrivez ici votre nom>
-   Date    : oct 2019
+   Date    : janv 2015
    REF     : 1SN - S7 Reseaux locaux industriels
                    S5 Solutions constructives
 

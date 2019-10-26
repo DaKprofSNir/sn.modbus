@@ -3,7 +3,7 @@
    Fichier : modbus_LIB.ino
    Version du fichier : 1.0
    Auteur  : D. KIHN - Institut Limayrac
-   Date    : oct 2019
+   Date    : janv 2015
    REF     : 1SN - S7 Reseaux locaux industriels
                    S5 Solutions constructives
 
@@ -11,9 +11,6 @@
   
 word CalculCrc16( byte* Request, word taille_trame_utile )  Calcule le CRC16
 word HexToBin( char hexa )         Conversion HEXA->Binaire
-char MsbToHex( byte b )            Conversion Binaire->HEXA
-char LsbToHex( byte b )            Conversion Binaire->HEXA
-void PrintDeviceUUID()             imprime le numero de serie du microcontroleur
 void SerialBufferVersRequete()     ASCII -> RTU
 void RequeteVersSerialBuffer()     RTU -> ASCII
 void LibererSerialBuffer(void)     Vider le tampon
@@ -52,13 +49,11 @@ word HexToBin( char hexa ){
    return ( hexa>='A' )? (10 + hexa - 'A') : (hexa - '0') ;
 }
 
-char MsbToHex( byte b ){ b&=15; return (b<10)?('0'+b):('A'+b-10); }
-char LsbToHex( byte b ){ b>>=4; return (b<10)?('0'+b):('A'+b-10); }
 /*-------------------------------------------------------
     Fonctions ASCII -> RTU  SerialBufferVersRequete
            et RTU -> ASCII  RequeteVersSerialBuffer()
 --------------------------------------------------------*/
-void SerialBufferVersRequete(void){
+void SerialBufferVersRequete(){
   word i,j;
   for( i=0,j=0; i<SerialBufferLen; i+=2,j++ ){
        Request[j] = HexToBin(SerialBuffer[i])*16 + HexToBin(SerialBuffer[i+1]);     
@@ -66,7 +61,7 @@ void SerialBufferVersRequete(void){
   RequestLen = j;
 }
 
-void RequeteVersSerialBuffer(void){
+void RequeteVersSerialBuffer(){
    word i,j;   byte msb,lsb;
    for( i=0,j=0; j<RequestLen; j++, i+=2 ){
        msb=Request[j]>>4; lsb=Request[j]&0x0F;
@@ -82,7 +77,7 @@ void LibererSerialBuffer(void){
 }
 
 
-int SerialReadLine(void){
+int SerialReadLine(){
   if( SerialReceved )return -1 ;
   char incomingByte;
   if( Serial.available() > 0 ){
@@ -106,9 +101,9 @@ int SerialReadLine(void){
             }
         default:
             if (SerialBufferLen < MAXSERIALBUFFERLEN) {
-                if( ((incomingByte>='a') && (incomingByte<='f')) ){ incomingByte -=32; }
-                if( ((incomingByte>='A') && (incomingByte<='F')) || 
-                    ((incomingByte>='0') && (incomingByte<='9')) ){          
+                if( (incomingByte>='a') && (incomingByte<='f') ){ incomingByte -=32; }
+                if( (incomingByte>='A') && (incomingByte<='F') || 
+                    (incomingByte>='0') && (incomingByte<='9') ){          
                     SerialBuffer[SerialBufferLen++] = incomingByte; 
                     SerialBuffer[SerialBufferLen] = 0;
                 }else{
@@ -127,9 +122,17 @@ int SerialReadLine(void){
     return -1;
 }
 
+boolean exception( const char* message ){
+  Serial << F("                       ") << message << CRLF;
+  Serial << F( "Reponse de l'esclave : (pas de reponse)") << CRLF;
+  Serial << MPROMPT; // afficher le prompt
+  LibererSerialBuffer();
+  return false; // pas de reponse
+}
 
-boolean faire_un_cycle(void){
-    static uint32_t prochaine_mesure = 0;
+
+boolean faire_un_cycle(){
+    static long prochaine_mesure = 0;
     if( millis() >= prochaine_mesure ){
         prochaine_mesure = millis() + TEMPS_DE_CYCLE_AUTOMATE;
         return true;
@@ -138,37 +141,6 @@ boolean faire_un_cycle(void){
     }
 }
 
-//boolean exception( const char* message ){
-boolean exception( const __FlashStringHelper *message ){
-  Serial << F("                       ") << message << CRLF;
-  Serial << F("Reponse de l'esclave : (pas de reponse)") << CRLF;
-  Serial << MPROMPT; // afficher le prompt
-  LibererSerialBuffer();
-  return false; // pas de reponse
-}
-
-void PrintDeviceUUID(){ 
-    // Attention spécifique Atmega328 ! Si autre µP utiliser https://github.com/ricaun/ArduinoUniqueID
-    Serial << F("DeviceUUID : ");
-    for( size_t i=0x000E; i<=0x0017; i++ ){
-        byte n = boot_signature_byte_get(i);
-        Serial << MsbToHex(n) << LsbToHex(n) << (((i&3)==3)?" ":"") ; 
-    }
-    Serial << CRLF; 
-}
-
-
-boolean Verifier_len_crc(byte LEN){
-    //---- verifier la taille de la requete -------
-     if( RequestLen<LEN ) return exception( F("Erreur de transmission (octets manquants).") );
-     if( RequestLen>LEN ) return exception( F("Erreur de transmission (octets surnumeraires).") );
-     //---- verifier le crc
-     word crc = CalculCrc16( Request,RequestLen-2 );
-     if( (Request[RequestLen-2] != (crc & 0x00FF) ) ||
-         (Request[RequestLen-1] != (crc >> 8)     ) )
-         return exception( F("Erreur de transmission (crc).") );
-    return true;
-}
   
 boolean RepondreErreur( byte NumErreur ){
      word crc;
@@ -182,9 +154,3 @@ boolean RepondreErreur( byte NumErreur ){
      return true;
 }
 
-void AjouteCRC(void){
-     //----------- ajout du CRC à la trame reponse ---------------------------------
-     word crc = CalculCrc16( Request, RequestLen);
-     Request[RequestLen++] = crc & 0x00FF;
-     Request[RequestLen++] = crc >> 8;
-}     

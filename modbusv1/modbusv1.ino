@@ -1,8 +1,14 @@
 /*------------------------------------------
-    Projet  : Automate MODBUS version 2.0
-    Fichier : modbus.ino                     | Version du fichier : 1.0
-    Fonction du module : Ce module comprend les fonctions de plus haut niveau
-    Auteur  : D. KIHN - Institut Limayrac    | Date    : oct 2019
+   Projet  : Automate MODBUS version 2.0
+   Fichier : modbus.ino
+   Version du fichier : 1.0
+   Auteur  : D. KIHN - Institut Limayrac
+   Date    : janv 2015 . 2017 . 2019
+   REF     : 1SN - S7 Reseaux locaux industriels
+                   S5 Solutions constructives
+
+   Fonction du module :
+        Ce module comprend les fonctions principales
 ------------------------------------------*/
 
 #include "modbus.h"
@@ -24,7 +30,7 @@ void setup(){
     pinMode(A0, INPUT);  // entree sur le CAN 0
     delay(2000);
     Serial << MPROMPT;
-}//setup()
+}
 
 /*------  La bouckle principale -------------*/
 void loop(){        
@@ -39,7 +45,7 @@ void loop(){
         //---- AJOUTEZ ICI VOS PROPRES SCRUTATIONS --------------
         getEtatDuCapteur();// votre propre acquisition de quelque chose
     }
-}//loop()
+}
 
 boolean TraiterRequete( void ){
      //---- Decodage trame ASCII -> RTU
@@ -47,7 +53,7 @@ boolean TraiterRequete( void ){
      SerialBufferVersRequete(); 
      LibererSerialBuffer();
      //----------- cette requete est-elle pour nous ? ---------------------------------
-     if( Request[0] != ESCLAVE ) return exception( F("Requete adressee a un autre esclave."));
+     if( Request[0] != ESCLAVE ) return exception( "Requete adressee a un autre esclave.");
      
      //----------- traitement de la requete du maitre ---------------------------------
      switch( Request[1] ){
@@ -69,5 +75,8 @@ boolean TraiterRequete( void ){
      Serial << F("Reponse de l'esclave : ") << SerialBuffer << '\n';
      Serial << MPROMPT; // afficher le prompt
      LibererSerialBuffer();
-     return true;
-}//TraiterRequete
+}
+
+
+
+

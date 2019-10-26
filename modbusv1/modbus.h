@@ -11,8 +11,7 @@
       Declarations communes
 ------------------------------------------*/
 
-#include <Arduino.h>
-#include <avr/boot.h>
+#include "Arduino.h"
 
 //---- definitions de l'esclave modbus
 #define ESCLAVE 0x04
@@ -23,7 +22,7 @@ extern word memoire[TAILLE_MEMOIRE+1]; // les W1 à W30. Attention les mots comm
 /*--- definition des fonctions implémentées -----
 03 LIRE un mot de 16 bits dans les registres internes W0001 à W0029
 65 Chaine d'identification
-       definition des registres internes
+/*--- definition des registres internes -----
 W0001  Temperature interne partie entiere
 W0002  Temperature interne partie decimale
 W0004  valeur CAN placée par modbus_CAPTEUR.ino
@@ -49,18 +48,4 @@ extern char SerialBuffer[MAXSERIALBUFFERLEN+1];
 extern word SerialBufferLen;
 extern boolean SerialReceved;
 
-/*
-int SerialReadLine(void);
-boolean faire_un_cycle(void);
-float getInternalTemp(void);
-void setVirtualPort(void);
-void getVirtualPort(void);
-void SerialBufferVersRequete(void);
-void LibererSerialBuffer(void);
-boolean exception( const __FlashStringHelper *message );
-boolean ModBusFonctionIdentification(void);
-boolean RepondreErreur( byte NumErreur );
-void RequeteVersSerialBuffer(void);
-boolean Verifier_len_crc(byte LEN);
-void AjouteCRC(void);
-*/
+

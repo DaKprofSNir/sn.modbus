@@ -15,7 +15,7 @@
 #define ANIM1
 //#undef  ANIM1
 
-void setVirtualPort(void){
+void setVirtualPort(){
   // W0005  Port virtuel de sortie, 
   // les bits 0 à 5 correspondent au bandeau de LEDs branché entre GND et 8
   static boolean init=true;
@@ -39,7 +39,7 @@ void setVirtualPort(void){
   for( i=0; i<=5; i++) digitalWrite( i+8, ((data&(1<<i))==0)?LOW:HIGH );
 }
 
-void getVirtualPort(void){
+void getVirtualPort(){
   // W0006  Port virtuel d'entrée, 
   // les bits 0 à 5 correspondent aux broches 2 à 7
   static boolean init=true;
