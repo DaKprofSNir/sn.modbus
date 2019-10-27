@@ -22,6 +22,15 @@ float getInternalTempOrg(void){
   while(ADCSRA & (1 << ADSC)); // Attend la fin de la conversion
   can = ADCL | (ADCH << 8);    // Récupère le résultat de la conversion
   t = (can - 324.31 ) / 1.22;  // Calcule la température
+  /*---- petit tour de magie -------------------------------
+   * La précision d'un CAN est de 1/2 lsb 
+   * Le petit bit fait varier T de 0,82°C soit +-0,41°C
+   * Je vais varier le résultat DANS cette intervalle pour 
+   * que ça bouge un peu sans que ce soit faux pour autant.
+   */
+  long rnd = random(82);
+  t += (((float)rnd-41.0)/100.0);
+  //---- fin du petit tour de magie--------------------------*/
   DecomposerFloat( t, &msb, &lsb );
   memoire[ 0001 ] = msb;
   memoire[ 0002 ] = lsb;

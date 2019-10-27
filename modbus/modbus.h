@@ -32,11 +32,20 @@ W0006  Port virtuel d'entrée,  les bits 0 à 5 correspondent aux broches 3 à 7
 W0010  Premier chantillonnage entree analogique A0 - voir sujet de tp
 W0029  Echantillonnage n°30 entree analogique A0
 --------------------------------------------*/
+//---- Identification         0123456789ABCDEF
+#define CHAINEIDENTIFICATION "ArduModbus v2.1"
+//---- Fonctionnalités supportées
+#define USE_MQ2
+#define USE_MQ135
+#define USE_LCD
+#define USE_RTCinterne
+#define USE_DS1307
+#define USE_GROVE_NTC
+
 
 template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; } 
 #define CRLF F("\n")
 #define MPROMPT F(":)\n")
-#define CHAINEIDENTIFICATION "ArduModbus v2.1"
 
 //--- Le tableau d'octets qui contient la trame recue ou la trame a emettre
 #define MAXREQUESTLEN 25
@@ -49,18 +58,3 @@ extern char SerialBuffer[MAXSERIALBUFFERLEN+1];
 extern word SerialBufferLen;
 extern boolean SerialReceved;
 
-/*
-int SerialReadLine(void);
-boolean faire_un_cycle(void);
-float getInternalTemp(void);
-void setVirtualPort(void);
-void getVirtualPort(void);
-void SerialBufferVersRequete(void);
-void LibererSerialBuffer(void);
-boolean exception( const __FlashStringHelper *message );
-boolean ModBusFonctionIdentification(void);
-boolean RepondreErreur( byte NumErreur );
-void RequeteVersSerialBuffer(void);
-boolean Verifier_len_crc(byte LEN);
-void AjouteCRC(void);
-*/
