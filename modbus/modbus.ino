@@ -30,7 +30,7 @@ void setup(){
 void loop(){        
     if( Serial.available() > 0 ){ SerialReadLine(); return; }
     if( SerialReceved ){ TraiterRequete(); return; }
-    if( faire_un_cycle() ){
+    if( faire_un_cycle_Automate() ){
         //---- acquisition cyclique des valeurs toutes les TEMPS_DE_CYCLE_AUTOMATE millisecondes
         PORTB ^= 0x20;     // pour "voir" la LED changer a chaque cycle
         getInternalTemp(); // mesurer temperature interne

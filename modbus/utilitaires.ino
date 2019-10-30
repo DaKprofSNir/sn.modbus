@@ -128,7 +128,7 @@ int SerialReadLine(void){
 }
 
 
-boolean faire_un_cycle(void){
+boolean faire_un_cycle_Automate(void){
     static uint32_t prochaine_mesure = 0;
     if( millis() >= prochaine_mesure ){
         prochaine_mesure = millis() + TEMPS_DE_CYCLE_AUTOMATE;
