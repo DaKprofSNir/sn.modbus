@@ -57,9 +57,10 @@ float getInternalTemp(void){
   DecomposerFloat( t, &msb, &lsb );
   memoire[ 0001 ] = msb;
   memoire[ 0002 ] = lsb;
-  //--------- test
+  /*--------- test
   r=  (can*100-32431)/122 ;
   Serial << "t=" << t << CRLF << "r=" << r << CRLF ;  
+  */
   return t;
 }
 
